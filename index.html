@@ -1,1 +1,64 @@
-"<h1>Proyecto</h1>" 
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Perfil - Nuevo UI</title>
+</head>
+<body>
+  <h1>Registro de usuario</h1>
+
+  <form id="perfilForm">
+    <label>
+      Nombre de usuario
+      <input type="text" id="username" name="username" placeholder="tu_usuario" required>
+    </label>
+    <br>
+    <label>
+      Contraseña
+      <input type="password" id="password" name="password" placeholder="********" required>
+    </label>
+    <br>
+    <button type="submit">Enviar</button>
+  </form>
+
+  <pre id="resultado" aria-live="polite"></pre>
+
+  <script>
+    // Documentación de la llamada:
+    // Método: POST
+    // URL: ./backend.php
+    // Content-Type: application/json
+    // Parámetros enviados (JSON):
+    //   - username: string (requerido, 3-20 chars)
+    //   - password: string (requerido, 6-50 chars)
+    // Respuesta esperada (JSON):
+    //   { "status": "ok" | "error", "message": "texto" }
+
+    const form = document.getElementById('perfilForm');
+    const out = document.getElementById('resultado');
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const payload = {
+        username: document.getElementById('username').value.trim(),
+        password: document.getElementById('password').value
+      };
+
+      try {
+        const resp = await fetch('./backend.php', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+
+        const data = await resp.json();
+        out.textContent = JSON.stringify(data, null, 2);
+      } catch (err) {
+        out.textContent = JSON.stringify({ status: 'error', message: String(err) }, null, 2);
+      }
+    });
+  </script>
+</body>
+</html>
